@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Covenant Quest — Temple Ordinances &amp; Covenants Trivia</title>
+<style>
+  :root{
+    --bg:#0b1a3a;
+    --bg2:#102a5c;
+    --panel:#13305f;
+    --tile:#1b4288;
+    --tile-hover:#2a5bb5;
+    --gold:#f3c34e;
+    --gold-deep:#d9a521;
+    --text:#f4f7ff;
+    --muted:#a9bce0;
+    --good:#46c98b;
+    --used:#0c1f44;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(ellipse at top,var(--bg2),var(--bg));
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1400px;margin:0 auto;padding:24px 28px 48px;}
+
+  /* ---------- Header ---------- */
+  header.app{
+    text-align:center;
+    padding:14px 0 6px;
+  }
+  header.app h1{
+    font-size:clamp(28px,4vw,52px);
+    letter-spacing:1px;
+    color:var(--gold);
+    text-shadow:0 2px 12px rgba(0,0,0,.5);
+  }
+  header.app p{color:var(--muted);font-size:clamp(13px,1.4vw,18px);margin-top:4px;}
+
+  /* ---------- Buttons ---------- */
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;transition:.15s;}
+  .btn{
+    background:linear-gradient(180deg,var(--gold),var(--gold-deep));
+    color:#1a1300;font-weight:700;font-size:18px;
+    padding:14px 28px;box-shadow:0 4px 0 #9c7400;
+  }
+  .btn:hover{filter:brightness(1.07);transform:translateY(-1px);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #9c7400;}
+  .btn.secondary{
+    background:transparent;color:var(--gold);
+    border:2px solid var(--gold);box-shadow:none;
+  }
+  .btn.secondary:hover{background:rgba(243,195,78,.12);}
+
+  /* ---------- Setup screen ---------- */
+  .screen{display:none;}
+  .screen.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:28px 32px;
+    max-width:640px;
+    margin:24px auto;
+    box-shadow:0 18px 50px rgba(0,0,0,.4);
+  }
+  .card h2{color:var(--gold);margin-bottom:6px;font-size:26px;}
+  .card .sub{color:var(--muted);margin-bottom:20px;}
+  .team-input{
+    display:flex;align-items:center;gap:12px;margin:12px 0;
+  }
+  .team-input .dot{width:18px;height:18px;border-radius:50%;flex:none;}
+  .team-input input{
+    flex:1;background:var(--bg);border:1px solid rgba(255,255,255,.15);
+    color:var(--text);font-size:18px;padding:12px 14px;border-radius:10px;
+  }
+  .team-input input:focus{outline:2px solid var(--gold);}
+  .setup-actions{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap;}
+  .hint{text-align:center;color:var(--muted);font-size:14px;margin-top:14px;}
+
+  /* ---------- Scoreboard ---------- */
+  .scoreboard{
+    display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+    margin:6px auto 22px;
+  }
+  .team{
+    background:var(--panel);border-radius:14px;padding:12px 22px;min-width:200px;
+    text-align:center;border-top:5px solid var(--c,#888);position:relative;
+    box-shadow:0 6px 18px rgba(0,0,0,.3);
+  }
+  .team.lead{box-shadow:0 0 0 2px var(--gold),0 6px 18px rgba(0,0,0,.4);}
+  .team .name{font-weight:700;font-size:18px;}
+  .team .pts{font-size:34px;font-weight:800;color:var(--gold);line-height:1.1;}
+  .team .crown{position:absolute;top:-14px;right:8px;font-size:22px;display:none;}
+  .team.lead .crown{display:block;}
+
+  /* ---------- Board ---------- */
+  .board{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;
+  }
+  .cat{
+    background:linear-gradient(180deg,#163b7d,#0f2c61);
+    border-radius:12px;padding:16px 10px;text-align:center;
+    font-weight:800;font-size:clamp(14px,1.5vw,20px);color:var(--gold);
+    text-transform:uppercase;letter-spacing:.5px;
+    display:flex;align-items:center;justify-content:center;min-height:78px;
+  }
+  .tile{
+    background:var(--tile);border-radius:12px;color:var(--gold);
+    font-size:clamp(28px,3.4vw,46px);font-weight:800;
+    min-height:96px;display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .tile:hover{background:var(--tile-hover);transform:scale(1.03);}
+  .tile.used{
+    background:var(--used);color:transparent;cursor:default;
+    box-shadow:none;transform:none;
+  }
+
+  /* ---------- Question modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(4,10,26,.86);
+    display:none;align-items:center;justify-content:center;padding:24px;z-index:50;
+    backdrop-filter:blur(3px);
+  }
+  .overlay.active{display:flex;animation:fade .2s ease;}
+  .q-card{
+    background:linear-gradient(180deg,#15346b,#0e2557);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;max-width:900px;width:100%;padding:30px 34px 26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .q-cat{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+  .q-val{color:var(--gold);font-size:26px;font-weight:800;}
+  .timer-bar{height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin:14px 0 22px;}
+  .timer-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--good),var(--gold));transition:width 1s linear;}
+  .timer-fill.low{background:linear-gradient(90deg,#ff7a59,#ff3b3b);}
+  .q-text{font-size:clamp(22px,2.8vw,34px);line-height:1.35;margin-bottom:10px;}
+  .q-timer-num{text-align:center;font-size:20px;color:var(--muted);margin-bottom:10px;}
+  .answer{
+    background:rgba(70,201,139,.14);border:1px solid rgba(70,201,139,.5);
+    border-radius:12px;padding:16px 20px;margin:8px 0 6px;
+    font-size:clamp(18px,2.2vw,26px);display:none;
+  }
+  .answer.show{display:block;animation:fade .25s ease;}
+  .answer .lbl{color:var(--good);font-weight:800;display:block;margin-bottom:4px;font-size:15px;text-transform:uppercase;letter-spacing:1px;}
+  .answer .ref{color:var(--muted);font-size:15px;margin-top:8px;font-style:italic;}
+
+  .award{margin-top:20px;}
+  .award p{color:var(--muted);margin-bottom:10px;text-align:center;}
+  .award-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .award-btn{
+    padding:12px 18px;border-radius:10px;font-weight:700;font-size:16px;
+    color:#fff;border:2px solid transparent;background:rgba(255,255,255,.08);
+  }
+  .award-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+  .q-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+
+  /* ---------- Winner ---------- */
+  .winner{text-align:center;padding:30px 10px;}
+  .winner .trophy{font-size:90px;animation:pop .5s ease;}
+  @keyframes pop{0%{transform:scale(.2);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+  .winner h2{font-size:clamp(34px,5vw,60px);color:var(--gold);margin:8px 0;}
+  .winner .final{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0;}
+  .topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:6px;}
+  .small{padding:8px 16px;font-size:14px;}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;line-height:1.6;}
+  footer a{color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <h1>✨ Covenant Quest ✨</h1>
+    <p>Temple Ordinances &amp; Covenants — Trivia for the Strength of Youth</p>
+  </header>
+
+  <!-- ============ SETUP ============ -->
+  <section id="setup" class="screen active">
+    <div class="card">
+      <h2>Name Your Three Teams</h2>
+      <p class="sub">Three teams of three — huddle, answer, and earn points. First to think it through wins the round!</p>
+      <div class="team-input"><span class="dot" style="background:#f3c34e"></span><input id="t0" type="text" maxlength="22" placeholder="Team 1 name" value="Team 1"></div>
+      <div class="team-input"><span class="dot" style="background:#46c98b"></span><input id="t1" type="text" maxlength="22" placeholder="Team 2 name" value="Team 2"></div>
+      <div class="team-input"><span class="dot" style="background:#5aa9ff"></span><input id="t2" type="text" maxlength="22" placeholder="Team 3 name" value="Team 3"></div>
+      <div class="setup-actions">
+        <button class="btn" onclick="startGame()">Start Game ▶</button>
+      </div>
+      <p class="hint">Tip: Press <strong>F11</strong> for fullscreen before projecting.</p>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="game" class="screen">
+    <div class="topbar">
+      <button class="btn secondary small" onclick="resetBoard()">↺ New Game</button>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <!-- ============ WINNER ============ -->
+  <section id="end" class="screen">
+    <div class="card winner">
+      <div class="trophy">🏆</div>
+      <h2 id="winnerName">Winner!</h2>
+      <div class="final" id="finalScores"></div>
+      <button class="btn" onclick="resetBoard()">Play Again</button>
+    </div>
+  </section>
+
+  <footer>
+    Built for study &amp; fun based on <em>For the Strength of Youth</em>, ch. 8 — “Temple Ordinances and Covenants.”<br>
+    Source: <a href="https://www.churchofjesuschrist.org/study/manual/for-the-strength-of-youth/08-temple-ordinances-and-covenants?lang=eng" target="_blank" rel="noopener">churchofjesuschrist.org</a>
+  </footer>
+</div>
+
+<!-- ============ QUESTION OVERLAY ============ -->
+<div class="overlay" id="overlay">
+  <div class="q-card">
+    <div class="q-top">
+      <span class="q-cat" id="qCat">Category</span>
+      <span class="q-val" id="qVal">100</span>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+    <div class="q-timer-num" id="qTimerNum">20</div>
+    <div class="q-text" id="qText">Question goes here.</div>
+
+    <div class="answer" id="answerBox">
+      <span class="lbl">Answer</span>
+      <span id="qAnswer">Answer here.</span>
+      <div class="ref" id="qRef"></div>
+    </div>
+
+    <div class="q-actions" id="revealActions">
+      <button class="btn" onclick="revealAnswer()">Reveal Answer</button>
+    </div>
+
+    <div class="award" id="awardBox" style="display:none;">
+      <p>Award the points to:</p>
+      <div class="award-row" id="awardRow"></div>
+      <div class="q-actions">
+        <button class="btn secondary" onclick="closeQuestion()">No one / Skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Question bank — 4 categories × 3 difficulties (100/200/300)
+   Drawn from "For the Strength of Youth," ch. 8.
+   ============================================================ */
+const CATEGORIES = [
+  {
+    name:"Ordinances",
+    q:[
+      {p:100,q:"What word means a sacred ceremony or rite that has spiritual meaning and points us to Jesus Christ?",a:"An ordinance",ref:"FSY ch. 8"},
+      {p:200,q:"Name two ordinances a youth might receive on the path back to God.",a:"Baptism and confirmation (also the sacrament, priesthood ordination, the endowment, and sealing)",ref:"FSY ch. 8"},
+      {p:300,q:"Which weekly ordinance lets us renew the covenants we made at baptism?",a:"The sacrament",ref:"FSY ch. 8"}
+    ]
+  },
+  {
+    name:"Covenants",
+    q:[
+      {p:100,q:"A covenant is a two-way promise between you and whom?",a:"God (our Heavenly Father)",ref:"FSY ch. 8"},
+      {p:200,q:"In a covenant, you promise to keep God's commandments. What does He promise in return?",a:"Blessings — including His help, guidance, and ultimately eternal life",ref:"FSY ch. 8"},
+      {p:300,q:"Keeping covenants gives us access to God's power. What is that power called?",a:"The power of godliness / divine power and strength to become like Him",ref:"FSY ch. 8"}
+    ]
+  },
+  {
+    name:"The Temple",
+    q:[
+      {p:100,q:"The temple is often called the house of whom?",a:"The Lord (the house of God)",ref:"FSY ch. 8"},
+      {p:200,q:"What simple temple activity can youth do to help redeem their ancestors?",a:"Baptisms for the dead (proxy baptisms)",ref:"FSY ch. 8"},
+      {p:300,q:"What must you obtain, by living worthily, before you can enter the temple?",a:"A temple recommend",ref:"FSY ch. 8"}
+    ]
+  },
+  {
+    name:"Living It",
+    q:[
+      {p:100,q:"True or false: Covenants are meant to restrict us and take away our joy.",a:"False — covenants bring blessings, protection, and greater joy",ref:"FSY ch. 8"},
+      {p:200,q:"Name one way you can prepare now to make and keep temple covenants.",a:"Examples: keep the commandments, repent, study, pray, do family history, stay worthy",ref:"FSY ch. 8"},
+      {p:300,q:"When we make mistakes, what gift, made possible by Jesus Christ, lets us keep our covenants and start again?",a:"Repentance (through the Atonement of Jesus Christ)",ref:"FSY ch. 8"}
+    ]
+  }
+];
+
+const TEAM_COLORS = ["#f3c34e","#46c98b","#5aa9ff"];
+const TIME_LIMIT = 20;
+
+let teams = [];
+let current = null;       // {cat, q, tileEl}
+let timer = null;
+let timeLeft = TIME_LIMIT;
+
+/* ---------- Setup ---------- */
+function startGame(){
+  teams = [];
+  for(let i=0;i<3;i++){
+    let name = document.getElementById("t"+i).value.trim() || ("Team "+(i+1));
+    teams.push({name, score:0, color:TEAM_COLORS[i]});
+  }
+  buildBoard();
+  renderScores();
+  show("game");
+}
+
+function buildBoard(){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  // headers
+  CATEGORIES.forEach(c=>{
+    const h = document.createElement("div");
+    h.className="cat";
+    h.textContent=c.name;
+    board.appendChild(h);
+  });
+  // rows of values
+  for(let r=0;r<3;r++){
+    CATEGORIES.forEach((c,ci)=>{
+      const item = c.q[r];
+      const t = document.createElement("button");
+      t.className="tile";
+      t.textContent=item.p;
+      t.dataset.ci=ci;t.dataset.ri=r;
+      t.onclick=()=>openQuestion(ci,r,t);
+      board.appendChild(t);
+    });
+  }
+}
+
+/* ---------- Scores ---------- */
+function renderScores(){
+  const sb=document.getElementById("scoreboard");
+  sb.innerHTML="";
+  const max=Math.max(...teams.map(t=>t.score));
+  teams.forEach(t=>{
+    const d=document.createElement("div");
+    d.className="team"+(t.score===max && max>0 ? " lead":"");
+    d.style.setProperty("--c",t.color);
+    d.innerHTML=`<span class="crown">👑</span>
+      <div class="name">${escapeHtml(t.name)}</div>
+      <div class="pts">${t.score}</div>`;
+    sb.appendChild(d);
+  });
+}
+
+/* ---------- Question flow ---------- */
+function openQuestion(ci,ri,tileEl){
+  if(tileEl.classList.contains("used")) return;
+  const cat=CATEGORIES[ci];
+  const item=cat.q[ri];
+  current={ci,ri,item,tileEl};
+
+  document.getElementById("qCat").textContent=cat.name;
+  document.getElementById("qVal").textContent=item.p;
+  document.getElementById("qText").textContent=item.q;
+  document.getElementById("qAnswer").textContent=item.a;
+  document.getElementById("qRef").textContent=item.ref?("— "+item.ref):"";
+
+  document.getElementById("answerBox").classList.remove("show");
+  document.getElementById("revealActions").style.display="flex";
+  document.getElementById("awardBox").style.display="none";
+
+  document.getElementById("overlay").classList.add("active");
+  startTimer();
+}
+
+function startTimer(){
+  timeLeft=TIME_LIMIT;
+  const fill=document.getElementById("timerFill");
+  const num=document.getElementById("qTimerNum");
+  fill.classList.remove("low");
+  fill.style.transition="none";
+  fill.style.width="100%";
+  num.textContent=timeLeft;
+  // force reflow then enable transition
+  void fill.offsetWidth;
+  fill.style.transition="width 1s linear";
+  fill.style.width="0%";
+
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    timeLeft--;
+    num.textContent=timeLeft>0?timeLeft:"⏰ Time!";
+    if(timeLeft<=5) fill.classList.add("low");
+    if(timeLeft<=0){clearInterval(timer);}
+  },1000);
+}
+
+function revealAnswer(){
+  clearInterval(timer);
+  document.getElementById("answerBox").classList.add("show");
+  document.getElementById("revealActions").style.display="none";
+  // build award buttons
+  const row=document.getElementById("awardRow");
+  row.innerHTML="";
+  teams.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="award-btn";
+    b.style.background=t.color;
+    b.style.color="#11203f";
+    b.textContent="+"+current.item.p+" → "+t.name;
+    b.onclick=()=>awardPoints(i);
+    row.appendChild(b);
+  });
+  document.getElementById("awardBox").style.display="block";
+}
+
+function awardPoints(teamIdx){
+  teams[teamIdx].score+=current.item.p;
+  renderScores();
+  closeQuestion();
+}
+
+function closeQuestion(){
+  clearInterval(timer);
+  if(current && current.tileEl){
+    current.tileEl.classList.add("used");
+    current.tileEl.onclick=null;
+  }
+  document.getElementById("overlay").classList.remove("active");
+  current=null;
+  checkEnd();
+}
+
+function checkEnd(){
+  const tiles=document.querySelectorAll(".tile");
+  const allUsed=[...tiles].every(t=>t.classList.contains("used"));
+  if(allUsed) showWinner();
+}
+
+function showWinner(){
+  const max=Math.max(...teams.map(t=>t.score));
+  const winners=teams.filter(t=>t.score===max);
+  document.getElementById("winnerName").textContent=
+    winners.length>1 ? "It's a Tie!" : winners[0].name+" Wins!";
+  const fs=document.getElementById("finalScores");
+  fs.innerHTML="";
+  [...teams].sort((a,b)=>b.score-a.score).forEach(t=>{
+    const d=document.createElement("div");
+    d.className="team"+(t.score===max?" lead":"");
+    d.style.setProperty("--c",t.color);
+    d.innerHTML=`<span class="crown">👑</span>
+      <div class="name">${escapeHtml(t.name)}</div>
+      <div class="pts">${t.score}</div>`;
+    fs.appendChild(d);
+  });
+  show("end");
+}
+
+function resetBoard(){
+  clearInterval(timer);
+  document.getElementById("overlay").classList.remove("active");
+  show("setup");
+}
+
+/* ---------- Helpers ---------- */
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* keyboard: Esc closes overlay */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && document.getElementById("overlay").classList.contains("active")){
+    closeQuestion();
+  }
+});
+</script>
+</body>
+</html>
