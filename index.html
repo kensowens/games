@@ -202,6 +202,7 @@
   <!-- ============ GAME ============ -->
   <section id="game" class="screen">
     <div class="topbar">
+      <button class="btn small" onclick="startBonus()">⭐ Scripture Bonus</button>
       <button class="btn secondary small" onclick="resetBoard()">↺ New Game</button>
     </div>
     <div class="scoreboard" id="scoreboard"></div>
@@ -428,13 +429,56 @@ function awardPoints(teamIdx){
   closeQuestion();
 }
 
+/* ---------- Scripture Bonus Round ----------
+   The seven scripture references (and their teachings) listed at the end of
+   FSY ch. 8. Teachings are quoted verbatim from the chapter's "See ..." note. */
+const BONUS=[
+  {ref:"Isaiah 2:2–3", teaching:"God teaches us His ways in the temple."},
+  {ref:"Matthew 11:28–30", teaching:"Take the Savior's yoke upon yourself."},
+  {ref:"1 Nephi 14:14", teaching:"The power of God is upon His covenant people."},
+  {ref:"Doctrine and Covenants 97:15–16", teaching:"God's presence and His glory are in His house."},
+  {ref:"Doctrine and Covenants 109:22", teaching:"In the temple we are armed with God's power."},
+  {ref:"Doctrine and Covenants 131:1–4; 132:4–6, 15–20", teaching:"To receive eternal life, a man and woman must be sealed for eternity through the new and everlasting covenant of marriage."},
+  {ref:"Abraham 1:2", teaching:"Abraham wanted to be a greater follower of righteousness and receive greater knowledge."}
+];
+const BONUS_VALUE=150;
+let bonusIndex=-1;
+
+function startBonus(){
+  bonusIndex=0;
+  showBonus();
+}
+
+function showBonus(){
+  const b=BONUS[bonusIndex];
+  current={bonus:true, tileEl:null, item:{p:BONUS_VALUE, q:b.ref, a:b.teaching, ref:b.ref}};
+  document.getElementById("qCat").textContent="⭐ Scripture Bonus — "+(bonusIndex+1)+" of "+BONUS.length;
+  document.getElementById("qVal").textContent=BONUS_VALUE;
+  document.getElementById("qText").textContent="What does “"+b.ref+"” teach about the temple?";
+  document.getElementById("qAnswer").textContent=b.teaching;
+  document.getElementById("qRef").textContent="— "+b.ref;
+  document.getElementById("answerBox").classList.remove("show");
+  document.getElementById("revealActions").style.display="flex";
+  document.getElementById("awardBox").style.display="none";
+  document.getElementById("overlay").classList.add("active");
+  startTimer();
+}
+
 function closeQuestion(){
   clearInterval(timer);
+  document.getElementById("overlay").classList.remove("active");
+  // Bonus round: advance to the next scripture instead of using a board tile.
+  if(current && current.bonus){
+    current=null;
+    bonusIndex++;
+    if(bonusIndex<BONUS.length){ setTimeout(showBonus,150); }
+    else { bonusIndex=-1; }
+    return;
+  }
   if(current && current.tileEl){
     current.tileEl.classList.add("used");
     current.tileEl.onclick=null;
   }
-  document.getElementById("overlay").classList.remove("active");
   current=null;
   checkEnd();
 }
