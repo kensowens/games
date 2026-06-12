@@ -6,177 +6,128 @@
 <title>Covenant Quest — Temple Ordinances &amp; Covenants Trivia</title>
 <style>
   :root{
-    --bg:#0b1a3a;
-    --bg2:#102a5c;
-    --panel:#13305f;
-    --tile:#1b4288;
-    --tile-hover:#2a5bb5;
-    --gold:#f3c34e;
-    --gold-deep:#d9a521;
-    --text:#f4f7ff;
-    --muted:#a9bce0;
-    --good:#46c98b;
-    --used:#0c1f44;
+    --bg:#0b1a3a; --bg2:#102a5c; --panel:#13305f; --tile:#1b4288;
+    --tile-hover:#2a5bb5; --gold:#f3c34e; --gold-deep:#d9a521;
+    --text:#f4f7ff; --muted:#a9bce0; --good:#46c98b; --bad:#ff6b6b; --used:#0c1f44;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{height:100%;}
   body{
     font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
     background:radial-gradient(ellipse at top,var(--bg2),var(--bg));
-    color:var(--text);
-    min-height:100vh;
-    overflow-x:hidden;
+    color:var(--text);min-height:100vh;overflow-x:hidden;
   }
   .wrap{max-width:1400px;margin:0 auto;padding:24px 28px 48px;}
 
-  /* ---------- Header ---------- */
-  header.app{
-    text-align:center;
-    padding:14px 0 6px;
+  /* host banner */
+  #hostBanner{
+    display:none;background:linear-gradient(90deg,#7a1320,#b00504);color:#fff;
+    text-align:center;font-weight:700;padding:8px;letter-spacing:.5px;font-size:15px;
   }
-  header.app h1{
-    font-size:clamp(28px,4vw,52px);
-    letter-spacing:1px;
-    color:var(--gold);
-    text-shadow:0 2px 12px rgba(0,0,0,.5);
-  }
+  body.role-host #hostBanner{display:block;}
+
+  header.app{text-align:center;padding:14px 0 6px;}
+  header.app h1{font-size:clamp(26px,4vw,52px);letter-spacing:1px;color:var(--gold);text-shadow:0 2px 12px rgba(0,0,0,.5);}
   header.app p{color:var(--muted);font-size:clamp(13px,1.4vw,18px);margin-top:4px;}
 
-  /* ---------- Buttons ---------- */
-  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;transition:.15s;}
-  .btn{
-    background:linear-gradient(180deg,var(--gold),var(--gold-deep));
-    color:#1a1300;font-weight:700;font-size:18px;
-    padding:14px 28px;box-shadow:0 4px 0 #9c7400;
-  }
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;transition:.12s;}
+  .btn{background:linear-gradient(180deg,var(--gold),var(--gold-deep));color:#1a1300;font-weight:700;font-size:18px;padding:14px 28px;box-shadow:0 4px 0 #9c7400;}
   .btn:hover{filter:brightness(1.07);transform:translateY(-1px);}
   .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #9c7400;}
-  .btn.secondary{
-    background:transparent;color:var(--gold);
-    border:2px solid var(--gold);box-shadow:none;
-  }
+  .btn.secondary{background:transparent;color:var(--gold);border:2px solid var(--gold);box-shadow:none;}
   .btn.secondary:hover{background:rgba(243,195,78,.12);}
+  .btn.small{padding:8px 16px;font-size:14px;}
 
-  /* ---------- Setup screen ---------- */
   .screen{display:none;}
-  .screen.active{display:block;animation:fade .35s ease;}
+  .screen.active{display:block;animation:fade .3s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
-  .card{
-    background:var(--panel);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:18px;
-    padding:28px 32px;
-    max-width:640px;
-    margin:24px auto;
-    box-shadow:0 18px 50px rgba(0,0,0,.4);
-  }
+  .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px 32px;max-width:660px;margin:24px auto;box-shadow:0 18px 50px rgba(0,0,0,.4);}
   .card h2{color:var(--gold);margin-bottom:6px;font-size:26px;}
   .card .sub{color:var(--muted);margin-bottom:20px;}
-  .team-input{
-    display:flex;align-items:center;gap:12px;margin:12px 0;
-  }
+  .team-input{display:flex;align-items:center;gap:12px;margin:12px 0;}
   .team-input .dot{width:18px;height:18px;border-radius:50%;flex:none;}
-  .team-input input{
-    flex:1;background:var(--bg);border:1px solid rgba(255,255,255,.15);
-    color:var(--text);font-size:18px;padding:12px 14px;border-radius:10px;
-  }
+  .team-input input{flex:1;background:var(--bg);border:1px solid rgba(255,255,255,.15);color:var(--text);font-size:18px;padding:12px 14px;border-radius:10px;}
   .team-input input:focus{outline:2px solid var(--gold);}
   .setup-actions{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap;}
-  .hint{text-align:center;color:var(--muted);font-size:14px;margin-top:14px;}
+  .hint{text-align:center;color:var(--muted);font-size:14px;margin-top:14px;line-height:1.6;}
 
-  /* ---------- Scoreboard ---------- */
-  .scoreboard{
-    display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
-    margin:6px auto 22px;
-  }
-  .team{
-    background:var(--panel);border-radius:14px;padding:12px 22px;min-width:200px;
-    text-align:center;border-top:5px solid var(--c,#888);position:relative;
-    box-shadow:0 6px 18px rgba(0,0,0,.3);
-  }
+  .topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:6px;flex-wrap:wrap;}
+  .host-only{display:none;}
+  body.role-host .host-only{display:inline-flex;}
+  body.role-host .board-only{display:none;}
+
+  .scoreboard{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px auto 22px;}
+  .team{background:var(--panel);border-radius:14px;padding:12px 22px;min-width:200px;text-align:center;border-top:5px solid var(--c,#888);position:relative;box-shadow:0 6px 18px rgba(0,0,0,.3);}
   .team.lead{box-shadow:0 0 0 2px var(--gold),0 6px 18px rgba(0,0,0,.4);}
   .team .name{font-weight:700;font-size:18px;}
   .team .pts{font-size:34px;font-weight:800;color:var(--gold);line-height:1.1;}
   .team .crown{position:absolute;top:-14px;right:8px;font-size:22px;display:none;}
   .team.lead .crown{display:block;}
+  .adjust{display:none;gap:8px;justify-content:center;margin-top:8px;}
+  body.role-host .adjust{display:flex;}
+  .adjust button{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.12);color:var(--text);font-size:18px;font-weight:800;}
+  .adjust button:hover{background:rgba(255,255,255,.22);}
 
-  /* ---------- Board ---------- */
-  .board{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;
-  }
-  .cat{
-    background:linear-gradient(180deg,#163b7d,#0f2c61);
-    border-radius:12px;padding:16px 10px;text-align:center;
-    font-weight:800;font-size:clamp(14px,1.5vw,20px);color:var(--gold);
-    text-transform:uppercase;letter-spacing:.5px;
-    display:flex;align-items:center;justify-content:center;min-height:78px;
-  }
-  .tile{
-    background:var(--tile);border-radius:12px;color:var(--gold);
-    font-size:clamp(28px,3.4vw,46px);font-weight:800;
-    min-height:96px;display:flex;align-items:center;justify-content:center;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
-  }
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;}
+  .cat{background:linear-gradient(180deg,#163b7d,#0f2c61);border-radius:12px;padding:16px 10px;text-align:center;font-weight:800;font-size:clamp(13px,1.4vw,19px);color:var(--gold);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;min-height:74px;}
+  .tile{background:var(--tile);border-radius:12px;color:var(--gold);font-size:clamp(26px,3.2vw,44px);font-weight:800;min-height:92px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);}
   .tile:hover{background:var(--tile-hover);transform:scale(1.03);}
-  .tile.used{
-    background:var(--used);color:transparent;cursor:default;
-    box-shadow:none;transform:none;
-  }
+  .tile.used{background:var(--used);color:transparent;cursor:default;box-shadow:none;transform:none;}
 
-  /* ---------- Question modal ---------- */
-  .overlay{
-    position:fixed;inset:0;background:rgba(4,10,26,.86);
-    display:none;align-items:center;justify-content:center;padding:24px;z-index:50;
-    backdrop-filter:blur(3px);
-  }
+  /* Overlay */
+  .overlay{position:fixed;inset:0;background:rgba(4,10,26,.88);display:none;align-items:center;justify-content:center;padding:24px;z-index:50;backdrop-filter:blur(3px);}
   .overlay.active{display:flex;animation:fade .2s ease;}
-  .q-card{
-    background:linear-gradient(180deg,#15346b,#0e2557);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:20px;max-width:900px;width:100%;padding:30px 34px 26px;
-    box-shadow:0 30px 80px rgba(0,0,0,.6);
-  }
-  .q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .q-card{background:linear-gradient(180deg,#15346b,#0e2557);border:1px solid rgba(255,255,255,.1);border-radius:20px;max-width:920px;width:100%;padding:28px 34px 26px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+  .q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
   .q-cat{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
   .q-val{color:var(--gold);font-size:26px;font-weight:800;}
-  .timer-bar{height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin:14px 0 22px;}
-  .timer-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--good),var(--gold));transition:width 1s linear;}
-  .timer-fill.low{background:linear-gradient(90deg,#ff7a59,#ff3b3b);}
-  .q-text{font-size:clamp(22px,2.8vw,34px);line-height:1.35;margin-bottom:10px;}
-  .q-timer-num{text-align:center;font-size:20px;color:var(--muted);margin-bottom:10px;}
-  .answer{
-    background:rgba(70,201,139,.14);border:1px solid rgba(70,201,139,.5);
-    border-radius:12px;padding:16px 20px;margin:8px 0 6px;
-    font-size:clamp(18px,2.2vw,26px);display:none;
-  }
-  .answer.show{display:block;animation:fade .25s ease;}
-  .answer .lbl{color:var(--good);font-weight:800;display:block;margin-bottom:4px;font-size:15px;text-transform:uppercase;letter-spacing:1px;}
-  .answer .ref{color:var(--muted);font-size:15px;margin-top:8px;font-style:italic;}
+  .q-text{font-size:clamp(22px,2.8vw,34px);line-height:1.35;margin:6px 0 16px;}
 
-  .award{margin-top:20px;}
-  .award p{color:var(--muted);margin-bottom:10px;text-align:center;}
-  .award-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-  .award-btn{
-    padding:12px 18px;border-radius:10px;font-weight:700;font-size:16px;
-    color:#fff;border:2px solid transparent;background:rgba(255,255,255,.08);
-  }
-  .award-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
-  .q-actions{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+  .answer{background:rgba(70,201,139,.14);border:1px solid rgba(70,201,139,.5);border-radius:12px;padding:14px 18px;margin:8px 0 14px;font-size:clamp(17px,2.1vw,25px);display:none;}
+  .answer.show{display:block;animation:fade .2s ease;}
+  .answer .lbl{color:var(--good);font-weight:800;display:block;margin-bottom:4px;font-size:14px;text-transform:uppercase;letter-spacing:1px;}
+  .answer .ref{color:var(--muted);font-size:14px;margin-top:8px;font-style:italic;}
 
-  /* ---------- Winner ---------- */
+  .status{text-align:center;font-size:clamp(16px,2vw,22px);margin:6px 0 14px;color:var(--text);}
+  .buzz-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+  .buzz-btn{padding:18px 24px;border-radius:12px;font-weight:800;font-size:clamp(16px,2vw,22px);color:#11203f;box-shadow:0 4px 0 rgba(0,0,0,.3);}
+  .buzz-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+  .locked{text-align:center;color:var(--muted);font-size:15px;margin-top:8px;}
+  .locked b{color:var(--bad);}
+
+  .buzz-bar-wrap{height:14px;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden;margin:14px auto 6px;max-width:520px;}
+  .buzz-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--good),var(--gold));transition:width .1s linear;}
+  .buzz-timer{text-align:center;font-size:30px;font-weight:800;color:var(--gold);margin-bottom:8px;}
+  .buzz-timer.low{color:var(--bad);}
+
+  .q-actions{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .award-btn{padding:14px 24px;border-radius:12px;font-weight:800;font-size:18px;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.3);}
+  .award-btn.good{background:linear-gradient(180deg,#4fd49a,#2fa873);}
+  .award-btn.bad{background:linear-gradient(180deg,#ff7a7a,#d64545);}
+  .award-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+
+  /* Answer key (host only) */
+  .answer-key{display:none;margin:26px auto 0;max-width:1000px;background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 20px;}
+  body.role-host .answer-key{display:block;}
+  .answer-key summary{cursor:pointer;font-weight:800;color:var(--gold);font-size:18px;padding:8px 0;}
+  .ak-cat{margin:14px 0;}
+  .ak-cat h4{color:var(--gold);margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:4px;}
+  .ak-q{margin:8px 0;font-size:15px;line-height:1.4;}
+  .ak-q .v{color:var(--gold);font-weight:800;margin-right:6px;}
+  .ak-q .a{color:var(--good);}
+
   .winner{text-align:center;padding:30px 10px;}
   .winner .trophy{font-size:90px;animation:pop .5s ease;}
   @keyframes pop{0%{transform:scale(.2);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
   .winner h2{font-size:clamp(34px,5vw,60px);color:var(--gold);margin:8px 0;}
   .winner .final{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0;}
-  .topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:6px;}
-  .small{padding:8px 16px;font-size:14px;}
   footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;line-height:1.6;}
   footer a{color:var(--gold);}
 </style>
 </head>
 <body>
+<div id="hostBanner">🔒 HOST VIEW — answers are visible only on this screen. Keep this window on your laptop, not the projector.</div>
 <div class="wrap">
 
   <header class="app">
@@ -184,38 +135,48 @@
     <p>“Temple Ordinances and Covenants Give You Greater Access to God’s Blessings”</p>
   </header>
 
-  <!-- ============ SETUP ============ -->
+  <!-- ===== SETUP ===== -->
   <section id="setup" class="screen active">
     <div class="card">
       <h2>Name Your Three Teams</h2>
-      <p class="sub">Three teams of three — huddle, answer, and earn points. First to think it through wins the round!</p>
+      <p class="sub">Three teams of three. A team <strong>raises their hand to buzz in</strong>; the host taps that team and they get 5 seconds to answer. Wrong answers lose the points and pass to the next team.</p>
       <div class="team-input"><span class="dot" style="background:#f3c34e"></span><input id="t0" type="text" maxlength="22" placeholder="Team 1 name" value="Team 1"></div>
       <div class="team-input"><span class="dot" style="background:#46c98b"></span><input id="t1" type="text" maxlength="22" placeholder="Team 2 name" value="Team 2"></div>
       <div class="team-input"><span class="dot" style="background:#5aa9ff"></span><input id="t2" type="text" maxlength="22" placeholder="Team 3 name" value="Team 3"></div>
       <div class="setup-actions">
         <button class="btn" onclick="startGame()">Start Game ▶</button>
+        <button class="btn secondary board-only" onclick="openHostView()">🔒 Open Host View</button>
       </div>
-      <p class="hint">Tip: Press <strong>F11</strong> for fullscreen before projecting.</p>
+      <p class="hint">
+        Project this window (press <strong>F11</strong> for fullscreen).<br>
+        Click <strong>Open Host View</strong> to pop out a private window that shows the answers — keep it on your laptop.
+      </p>
     </div>
   </section>
 
-  <!-- ============ GAME ============ -->
+  <!-- ===== GAME ===== -->
   <section id="game" class="screen">
     <div class="topbar">
+      <button class="btn secondary small board-only" onclick="openHostView()">🔒 Host View</button>
       <button class="btn small" onclick="startBonus()">⭐ Scripture Bonus</button>
-      <button class="btn secondary small" onclick="resetBoard()">↺ New Game</button>
+      <button class="btn secondary small" onclick="newGame()">↺ New Game</button>
     </div>
     <div class="scoreboard" id="scoreboard"></div>
     <div class="board" id="board"></div>
+
+    <details class="answer-key">
+      <summary>📋 Full Answer Key (host reference)</summary>
+      <div id="answerKey"></div>
+    </details>
   </section>
 
-  <!-- ============ WINNER ============ -->
+  <!-- ===== END ===== -->
   <section id="end" class="screen">
     <div class="card winner">
       <div class="trophy">🏆</div>
       <h2 id="winnerName">Winner!</h2>
       <div class="final" id="finalScores"></div>
-      <button class="btn" onclick="resetBoard()">Play Again</button>
+      <button class="btn" onclick="newGame()">Play Again</button>
     </div>
   </section>
 
@@ -226,213 +187,49 @@
   </footer>
 </div>
 
-<!-- ============ QUESTION OVERLAY ============ -->
+<!-- ===== QUESTION OVERLAY ===== -->
 <div class="overlay" id="overlay">
   <div class="q-card">
-    <div class="q-top">
-      <span class="q-cat" id="qCat">Category</span>
-      <span class="q-val" id="qVal">100</span>
-    </div>
-    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-    <div class="q-timer-num" id="qTimerNum">20</div>
-    <div class="q-text" id="qText">Question goes here.</div>
-
+    <div class="q-top"><span class="q-cat" id="qCat"></span><span class="q-val" id="qVal"></span></div>
+    <div class="q-text" id="qText"></div>
     <div class="answer" id="answerBox">
-      <span class="lbl">Answer</span>
-      <span id="qAnswer">Answer here.</span>
+      <span class="lbl" id="answerLbl">Answer</span>
+      <span id="qAnswer"></span>
       <div class="ref" id="qRef"></div>
     </div>
-
-    <div class="q-actions" id="revealActions">
-      <button class="btn" onclick="revealAnswer()">Reveal Answer</button>
-    </div>
-
-    <div class="award" id="awardBox" style="display:none;">
-      <p>Award the points to:</p>
-      <div class="award-row" id="awardRow"></div>
-      <div class="q-actions">
-        <button class="btn secondary" onclick="closeQuestion()">No one / Skip</button>
-      </div>
-    </div>
+    <div id="qControls"></div>
   </div>
 </div>
 
 <script>
 /* ============================================================
-   Question bank — 4 categories × 3 difficulties (100/200/300)
-   Drawn from "For the Strength of Youth," ch. 8.
+   Question bank — verified word-for-word against the chapter text.
    ============================================================ */
-/* Every question and answer below is verified word-for-word against the chapter text:
-   "Temple ordinances and covenants give you greater access to God's blessings"
-   (subtitle: Doctrine and Covenants 95:8),
-   For the Strength of Youth: A Guide for Making Choices (2026), chapter 8. */
 const CATEGORIES = [
-  {
-    name:"The Endowment",
-    q:[
-      {p:100,q:"The chapter describes the endowment as a gift of which two things?",a:"A gift of knowledge and power.",ref:"FSY ch. 8, Eternal Truths"},
-      {p:200,q:"In the ordinances of the endowment, whose name do you take upon yourself more fully?",a:"The Savior's name (Jesus Christ).",ref:"FSY ch. 8, Eternal Truths"},
-      {p:300,q:"As part of the endowment you receive the privilege of wearing what — a symbol of Jesus Christ and a reminder of your temple covenants?",a:"The garment of the holy priesthood.",ref:"FSY ch. 8, Eternal Truths"}
-    ]
-  },
-  {
-    name:"Covenants You Make",
-    q:[
-      {p:100,q:"Name two of the five things you covenant to do in the temple endowment.",a:"Any two of: obey God; sacrifice to do His will; live the gospel of Jesus Christ; obey the law of chastity; consecrate your life and all God has given you to His Church.",ref:"FSY ch. 8, Eternal Truths"},
-      {p:200,q:"The chapter gives a second word for 'consecrate.' What does it mean to consecrate your life?",a:"To dedicate it — your life and all that God has given you to His Church.",ref:"FSY ch. 8, Eternal Truths"},
-      {p:300,q:"In the sealing, you and your spouse promise to be loyal to God and each other, to love and serve each other, and to do what together?",a:"Work together to keep God's laws.",ref:"FSY ch. 8, Eternal Truths"}
-    ]
-  },
-  {
-    name:"Promised Blessings",
-    q:[
-      {p:100,q:"God promises to bless you with greater knowledge, protection, and access to what?",a:"Access to His power.",ref:"FSY ch. 8, Eternal Truths"},
-      {p:200,q:"Receiving the highest glory with God in the celestial kingdom is a blessing called what?",a:"Exaltation.",ref:"FSY ch. 8, Eternal Truths"},
-      {p:300,q:"Nobody is perfect. The chapter says making and keeping covenants gives you power to become perfect through whom?",a:"Through Jesus Christ — “He is your strength!”",ref:"FSY ch. 8, Questions and Answers"}
-    ]
-  },
-  {
-    name:"House of the Lord",
-    q:[
-      {p:100,q:"The chapter repeatedly calls the temple by another name. It is the house of whom?",a:"The house of the Lord.",ref:"FSY ch. 8"},
-      {p:200,q:"What should you always have — received from a member of your bishopric — to enter the temple?",a:"A temple recommend.",ref:"FSY ch. 8, Invitations"},
-      {p:300,q:"In the house of the Lord you can receive His two highest ordinances. Name them.",a:"The endowment and the sealing.",ref:"FSY ch. 8, intro"}
-    ]
-  }
+  {name:"The Endowment",q:[
+    {p:100,q:"The chapter describes the endowment as a gift of which two things?",a:"A gift of knowledge and power.",ref:"FSY ch. 8, Eternal Truths"},
+    {p:200,q:"In the ordinances of the endowment, whose name do you take upon yourself more fully?",a:"The Savior's name (Jesus Christ).",ref:"FSY ch. 8, Eternal Truths"},
+    {p:300,q:"As part of the endowment you receive the privilege of wearing what — a symbol of Jesus Christ and a reminder of your temple covenants?",a:"The garment of the holy priesthood.",ref:"FSY ch. 8, Eternal Truths"}
+  ]},
+  {name:"Covenants You Make",q:[
+    {p:100,q:"Name two of the five things you covenant to do in the temple endowment.",a:"Any two of: obey God; sacrifice to do His will; live the gospel of Jesus Christ; obey the law of chastity; consecrate your life and all God has given you to His Church.",ref:"FSY ch. 8, Eternal Truths"},
+    {p:200,q:"The chapter gives a second word for 'consecrate.' What does it mean to consecrate your life?",a:"To dedicate it — your life and all that God has given you to His Church.",ref:"FSY ch. 8, Eternal Truths"},
+    {p:300,q:"In the sealing, you and your spouse promise to be loyal to God and each other, to love and serve each other, and to do what together?",a:"Work together to keep God's laws.",ref:"FSY ch. 8, Eternal Truths"}
+  ]},
+  {name:"Promised Blessings",q:[
+    {p:100,q:"God promises to bless you with greater knowledge, protection, and access to what?",a:"Access to His power.",ref:"FSY ch. 8, Eternal Truths"},
+    {p:200,q:"Receiving the highest glory with God in the celestial kingdom is a blessing called what?",a:"Exaltation.",ref:"FSY ch. 8, Eternal Truths"},
+    {p:300,q:"Nobody is perfect. The chapter says making and keeping covenants gives you power to become perfect through whom?",a:"Through Jesus Christ — “He is your strength!”",ref:"FSY ch. 8, Questions and Answers"}
+  ]},
+  {name:"House of the Lord",q:[
+    {p:100,q:"The chapter repeatedly calls the temple by another name. It is the house of whom?",a:"The house of the Lord.",ref:"FSY ch. 8"},
+    {p:200,q:"What should you always have — received from a member of your bishopric — to enter the temple?",a:"A temple recommend.",ref:"FSY ch. 8, Invitations"},
+    {p:300,q:"In the house of the Lord you can receive His two highest ordinances. Name them.",a:"The endowment and the sealing.",ref:"FSY ch. 8, intro"}
+  ]}
 ];
 
-const TEAM_COLORS = ["#f3c34e","#46c98b","#5aa9ff"];
-const TIME_LIMIT = 20;
-
-let teams = [];
-let current = null;       // {cat, q, tileEl}
-let timer = null;
-let timeLeft = TIME_LIMIT;
-
-/* ---------- Setup ---------- */
-function startGame(){
-  teams = [];
-  for(let i=0;i<3;i++){
-    let name = document.getElementById("t"+i).value.trim() || ("Team "+(i+1));
-    teams.push({name, score:0, color:TEAM_COLORS[i]});
-  }
-  buildBoard();
-  renderScores();
-  show("game");
-}
-
-function buildBoard(){
-  const board = document.getElementById("board");
-  board.innerHTML = "";
-  // headers
-  CATEGORIES.forEach(c=>{
-    const h = document.createElement("div");
-    h.className="cat";
-    h.textContent=c.name;
-    board.appendChild(h);
-  });
-  // rows of values
-  for(let r=0;r<3;r++){
-    CATEGORIES.forEach((c,ci)=>{
-      const item = c.q[r];
-      const t = document.createElement("button");
-      t.className="tile";
-      t.textContent=item.p;
-      t.dataset.ci=ci;t.dataset.ri=r;
-      t.onclick=()=>openQuestion(ci,r,t);
-      board.appendChild(t);
-    });
-  }
-}
-
-/* ---------- Scores ---------- */
-function renderScores(){
-  const sb=document.getElementById("scoreboard");
-  sb.innerHTML="";
-  const max=Math.max(...teams.map(t=>t.score));
-  teams.forEach(t=>{
-    const d=document.createElement("div");
-    d.className="team"+(t.score===max && max>0 ? " lead":"");
-    d.style.setProperty("--c",t.color);
-    d.innerHTML=`<span class="crown">👑</span>
-      <div class="name">${escapeHtml(t.name)}</div>
-      <div class="pts">${t.score}</div>`;
-    sb.appendChild(d);
-  });
-}
-
-/* ---------- Question flow ---------- */
-function openQuestion(ci,ri,tileEl){
-  if(tileEl.classList.contains("used")) return;
-  const cat=CATEGORIES[ci];
-  const item=cat.q[ri];
-  current={ci,ri,item,tileEl};
-
-  document.getElementById("qCat").textContent=cat.name;
-  document.getElementById("qVal").textContent=item.p;
-  document.getElementById("qText").textContent=item.q;
-  document.getElementById("qAnswer").textContent=item.a;
-  document.getElementById("qRef").textContent=item.ref?("— "+item.ref):"";
-
-  document.getElementById("answerBox").classList.remove("show");
-  document.getElementById("revealActions").style.display="flex";
-  document.getElementById("awardBox").style.display="none";
-
-  document.getElementById("overlay").classList.add("active");
-  startTimer();
-}
-
-function startTimer(){
-  timeLeft=TIME_LIMIT;
-  const fill=document.getElementById("timerFill");
-  const num=document.getElementById("qTimerNum");
-  fill.classList.remove("low");
-  fill.style.transition="none";
-  fill.style.width="100%";
-  num.textContent=timeLeft;
-  // force reflow then enable transition
-  void fill.offsetWidth;
-  fill.style.transition="width 1s linear";
-  fill.style.width="0%";
-
-  clearInterval(timer);
-  timer=setInterval(()=>{
-    timeLeft--;
-    num.textContent=timeLeft>0?timeLeft:"⏰ Time!";
-    if(timeLeft<=5) fill.classList.add("low");
-    if(timeLeft<=0){clearInterval(timer);}
-  },1000);
-}
-
-function revealAnswer(){
-  clearInterval(timer);
-  document.getElementById("answerBox").classList.add("show");
-  document.getElementById("revealActions").style.display="none";
-  // build award buttons
-  const row=document.getElementById("awardRow");
-  row.innerHTML="";
-  teams.forEach((t,i)=>{
-    const b=document.createElement("button");
-    b.className="award-btn";
-    b.style.background=t.color;
-    b.style.color="#11203f";
-    b.textContent="+"+current.item.p+" → "+t.name;
-    b.onclick=()=>awardPoints(i);
-    row.appendChild(b);
-  });
-  document.getElementById("awardBox").style.display="block";
-}
-
-function awardPoints(teamIdx){
-  teams[teamIdx].score+=current.item.p;
-  renderScores();
-  closeQuestion();
-}
-
-/* ---------- Scripture Bonus Round ----------
-   The seven scripture references (and their teachings) listed at the end of
-   FSY ch. 8. Teachings are quoted verbatim from the chapter's "See ..." note. */
-const BONUS=[
+/* Scripture references listed at the end of the chapter (verbatim teachings). */
+const BONUS = [
   {ref:"Isaiah 2:2–3", teaching:"God teaches us His ways in the temple."},
   {ref:"Matthew 11:28–30", teaching:"Take the Savior's yoke upon yourself."},
   {ref:"1 Nephi 14:14", teaching:"The power of God is upon His covenant people."},
@@ -441,95 +238,345 @@ const BONUS=[
   {ref:"Doctrine and Covenants 131:1–4; 132:4–6, 15–20", teaching:"To receive eternal life, a man and woman must be sealed for eternity through the new and everlasting covenant of marriage."},
   {ref:"Abraham 1:2", teaching:"Abraham wanted to be a greater follower of righteousness and receive greater knowledge."}
 ];
-const BONUS_VALUE=150;
-let bonusIndex=-1;
 
-function startBonus(){
-  bonusIndex=0;
-  showBonus();
+const TEAM_COLORS = ["#f3c34e","#46c98b","#5aa9ff"];
+const BONUS_VALUE = 150;
+const ANSWER_SECONDS = 5;
+
+/* ---------- Role + cross-window sync ---------- */
+const ROLE = location.hash.toLowerCase().includes("host") ? "host" : "board";
+document.body.classList.add("role-"+ROLE);
+
+const STORE_KEY = "covenant-quest-state";
+let CH = null;
+try { CH = new BroadcastChannel("covenant-quest"); } catch(e){}
+
+/* ---------- Game state (single source of truth) ---------- */
+let state = {
+  rev: 0,
+  screen: "setup",
+  teams: [],
+  used: {},      // "ci-ri" or "b-i" -> true
+  active: null   // current question, see openTile/setActiveBonus
+};
+let timingOut = false;  // guards auto-timeout from firing twice
+
+function loadSaved(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){ state = JSON.parse(raw); }
+  } catch(e){}
+}
+function broadcast(){
+  const payload = JSON.stringify(state);
+  try { localStorage.setItem(STORE_KEY, payload); } catch(e){}
+  if(CH){ try { CH.postMessage(payload); } catch(e){} }
+}
+function applyIncoming(raw){
+  try {
+    const s = JSON.parse(raw);
+    if(s && typeof s.rev === "number" && s.rev >= state.rev){
+      state = s;
+      render();
+    }
+  } catch(e){}
+}
+if(CH){ CH.onmessage = e => applyIncoming(e.data); }
+window.addEventListener("storage", e => {
+  if(e.key === STORE_KEY && e.newValue) applyIncoming(e.newValue);
+});
+
+/* commit = bump revision, save, broadcast, and re-render locally */
+function commit(){ state.rev++; broadcast(); render(); }
+
+/* ---------- Actions ---------- */
+function startGame(){
+  // Only meaningful from a window that has the name inputs (the board view).
+  const names = [0,1,2].map(i => {
+    const el = document.getElementById("t"+i);
+    return (el && el.value.trim()) || ("Team "+(i+1));
+  });
+  state.teams = names.map((n,i) => ({name:n, score:0, color:TEAM_COLORS[i]}));
+  state.used = {};
+  state.active = null;
+  state.screen = "game";
+  commit();
 }
 
-function showBonus(){
-  const b=BONUS[bonusIndex];
-  current={bonus:true, tileEl:null, item:{p:BONUS_VALUE, q:b.ref, a:b.teaching, ref:b.ref}};
-  document.getElementById("qCat").textContent="⭐ Scripture Bonus — "+(bonusIndex+1)+" of "+BONUS.length;
-  document.getElementById("qVal").textContent=BONUS_VALUE;
-  document.getElementById("qText").textContent="What does “"+b.ref+"” teach about the temple?";
-  document.getElementById("qAnswer").textContent=b.teaching;
-  document.getElementById("qRef").textContent="— "+b.ref;
-  document.getElementById("answerBox").classList.remove("show");
-  document.getElementById("revealActions").style.display="flex";
-  document.getElementById("awardBox").style.display="none";
-  document.getElementById("overlay").classList.add("active");
-  startTimer();
+function newGame(){
+  state.screen = "setup";
+  state.used = {};
+  state.active = null;
+  state.teams = state.teams.map(t => ({...t, score:0}));
+  commit();
 }
 
-function closeQuestion(){
-  clearInterval(timer);
-  document.getElementById("overlay").classList.remove("active");
-  // Bonus round: advance to the next scripture instead of using a board tile.
-  if(current && current.bonus){
-    current=null;
-    bonusIndex++;
-    if(bonusIndex<BONUS.length){ setTimeout(showBonus,150); }
-    else { bonusIndex=-1; }
+function openTile(ci, ri){
+  if(state.active) return;
+  const key = ci+"-"+ri;
+  if(state.used[key]) return;
+  const cat = CATEGORIES[ci], item = cat.q[ri];
+  state.active = {
+    mode:"tile", key, cat:cat.name, value:item.p,
+    q:item.q, a:item.a, ref:item.ref,
+    phase:"open", buzzed:null, locked:[], controller:null, timerEnd:null
+  };
+  timingOut = false;
+  commit();
+}
+
+function startBonus(){ setActiveBonus(0); commit(); }
+function setActiveBonus(i){
+  const b = BONUS[i];
+  state.active = {
+    mode:"bonus", key:"b-"+i, bonusIndex:i,
+    cat:"⭐ Scripture Bonus — "+(i+1)+" of "+BONUS.length, value:BONUS_VALUE,
+    q:"What does “"+b.ref+"” teach about the temple?", a:b.teaching, ref:b.ref,
+    phase:"open", buzzed:null, locked:[], controller:null, timerEnd:null
+  };
+  timingOut = false;
+}
+
+function buzz(teamIdx){
+  const a = state.active;
+  if(!a || a.phase !== "open" || a.locked.includes(teamIdx)) return;
+  a.phase = "buzzed";
+  a.buzzed = teamIdx;
+  a.controller = ROLE;
+  a.timerEnd = Date.now() + ANSWER_SECONDS*1000;
+  timingOut = false;
+  commit();
+}
+
+function answerCorrect(){
+  const a = state.active;
+  if(!a || a.phase !== "buzzed") return;
+  state.teams[a.buzzed].score += a.value;
+  closeActive();
+  commit();
+}
+
+function answerWrong(){
+  const a = state.active;
+  if(!a || a.phase !== "buzzed") return;
+  const team = a.buzzed;
+  state.teams[team].score -= a.value;
+  a.locked.push(team);
+  a.buzzed = null;
+  a.controller = null;
+  a.timerEnd = null;
+  timingOut = false;
+  if(a.locked.length >= state.teams.length){
+    a.phase = "revealed";   // everyone missed it — show the answer
+  } else {
+    a.phase = "open";       // next team can buzz
+  }
+  commit();
+}
+
+function revealNoBuzz(){
+  const a = state.active;
+  if(!a || a.phase === "buzzed") return;
+  a.phase = "revealed";
+  commit();
+}
+
+function nextQuestion(){ closeActive(); commit(); }
+
+/* close current question (mark used), then advance bonus or end game */
+function closeActive(){
+  const a = state.active;
+  if(!a) return;
+  state.used[a.key] = true;
+  if(a.mode === "bonus"){
+    if(a.bonusIndex + 1 < BONUS.length){ setActiveBonus(a.bonusIndex + 1); return; }
+    state.active = null;
     return;
   }
-  if(current && current.tileEl){
-    current.tileEl.classList.add("used");
-    current.tileEl.onclick=null;
+  state.active = null;
+  if(allTilesUsed()) state.screen = "end";
+}
+
+function allTilesUsed(){
+  for(let ci=0; ci<CATEGORIES.length; ci++)
+    for(let ri=0; ri<3; ri++)
+      if(!state.used[ci+"-"+ri]) return false;
+  return true;
+}
+
+function adjustScore(teamIdx, delta){
+  if(!state.teams[teamIdx]) return;
+  state.teams[teamIdx].score += delta;
+  commit();
+}
+
+function openHostView(){
+  const url = location.pathname + location.search + "#host";
+  window.open(url, "CovenantQuestHost", "width=560,height=860");
+}
+
+/* ---------- Render ---------- */
+function render(){
+  // screens
+  const target = state.screen;
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === target));
+  renderScores();
+  renderBoard();
+  renderOverlay();
+  if(target === "end") renderWinner();
+}
+
+function renderScores(){
+  const sb = document.getElementById("scoreboard");
+  sb.innerHTML = "";
+  if(!state.teams.length) return;
+  const max = Math.max(...state.teams.map(t => t.score));
+  state.teams.forEach((t,i) => {
+    const d = document.createElement("div");
+    d.className = "team" + (t.score === max && state.teams.some(x=>x.score!==0) ? " lead" : "");
+    d.style.setProperty("--c", t.color);
+    d.innerHTML =
+      '<span class="crown">👑</span>' +
+      '<div class="name">'+escapeHtml(t.name)+'</div>' +
+      '<div class="pts">'+t.score+'</div>' +
+      '<div class="adjust">' +
+        '<button title="-50" onclick="adjustScore('+i+',-50)">−</button>' +
+        '<button title="+50" onclick="adjustScore('+i+',50)">+</button>' +
+      '</div>';
+    sb.appendChild(d);
+  });
+}
+
+function renderBoard(){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  CATEGORIES.forEach(c => {
+    const h = document.createElement("div");
+    h.className = "cat"; h.textContent = c.name;
+    board.appendChild(h);
+  });
+  for(let r=0; r<3; r++){
+    CATEGORIES.forEach((c,ci) => {
+      const item = c.q[r], key = ci+"-"+r, used = !!state.used[key];
+      const t = document.createElement("button");
+      t.className = "tile" + (used ? " used" : "");
+      t.textContent = item.p;
+      if(!used) t.onclick = () => openTile(ci, r);
+      board.appendChild(t);
+    });
   }
-  current=null;
-  checkEnd();
+  // answer key (host)
+  const ak = document.getElementById("answerKey");
+  if(ak && !ak.dataset.built){
+    ak.innerHTML = CATEGORIES.map(c =>
+      '<div class="ak-cat"><h4>'+escapeHtml(c.name)+'</h4>' +
+      c.q.map(q => '<div class="ak-q"><span class="v">'+q.p+'</span>'+escapeHtml(q.q)+'<br><span class="a">▸ '+escapeHtml(q.a)+'</span></div>').join("") +
+      '</div>'
+    ).join("") +
+    '<div class="ak-cat"><h4>⭐ Scripture Bonus ('+BONUS_VALUE+' each)</h4>' +
+    BONUS.map(b => '<div class="ak-q"><span class="v">'+escapeHtml(b.ref)+'</span><br><span class="a">▸ '+escapeHtml(b.teaching)+'</span></div>').join("") +
+    '</div>';
+    ak.dataset.built = "1";
+  }
 }
 
-function checkEnd(){
-  const tiles=document.querySelectorAll(".tile");
-  const allUsed=[...tiles].every(t=>t.classList.contains("used"));
-  if(allUsed) showWinner();
+function renderOverlay(){
+  const ov = document.getElementById("overlay");
+  const a = state.active;
+  if(!a){ ov.classList.remove("active"); return; }
+  ov.classList.add("active");
+
+  document.getElementById("qCat").textContent = a.cat;
+  document.getElementById("qVal").textContent = a.value;
+  document.getElementById("qText").textContent = a.q;
+
+  // answer visible to host always; to everyone once revealed
+  const showAnswer = (ROLE === "host") || (a.phase === "revealed");
+  const ab = document.getElementById("answerBox");
+  ab.classList.toggle("show", showAnswer);
+  document.getElementById("answerLbl").textContent = (ROLE === "host" && a.phase !== "revealed") ? "Answer (host only)" : "Answer";
+  document.getElementById("qAnswer").textContent = a.a;
+  document.getElementById("qRef").textContent = a.ref ? ("— "+a.ref) : "";
+
+  const c = document.getElementById("qControls");
+  const teams = state.teams;
+  if(a.phase === "open"){
+    const eligible = teams.map((t,i)=>({t,i})).filter(x => !a.locked.includes(x.i));
+    c.innerHTML =
+      '<div class="status">🙋 Raise your hand! The host taps your team — then you get '+ANSWER_SECONDS+' seconds to answer.</div>' +
+      '<div class="buzz-row">' +
+        eligible.map(x => '<button class="buzz-btn" style="background:'+x.t.color+'" onclick="buzz('+x.i+')">🙋 '+escapeHtml(x.t.name)+'</button>').join("") +
+      '</div>' +
+      (a.locked.length ? '<div class="locked">Out this round: <b>'+a.locked.map(i=>escapeHtml(teams[i].name)).join(", ")+'</b></div>' : '') +
+      '<div class="q-actions"><button class="btn secondary" onclick="revealNoBuzz()">Show answer / no one buzzed</button></div>';
+  } else if(a.phase === "buzzed"){
+    const t = teams[a.buzzed];
+    c.innerHTML =
+      '<div class="status"><strong style="color:'+t.color+'">'+escapeHtml(t.name)+'</strong> is answering…</div>' +
+      '<div class="buzz-bar-wrap"><div class="buzz-bar" id="buzzBar"></div></div>' +
+      '<div class="buzz-timer" id="buzzTimer">'+ANSWER_SECONDS.toFixed(1)+'s</div>' +
+      '<div class="q-actions">' +
+        '<button class="award-btn good" onclick="answerCorrect()">✓ Correct (+'+a.value+')</button>' +
+        '<button class="award-btn bad" onclick="answerWrong()">✗ Wrong (−'+a.value+')</button>' +
+      '</div>';
+    updateBuzzTimer();
+  } else { // revealed
+    c.innerHTML =
+      '<div class="status">'+(a.locked.length >= teams.length ? "No team answered correctly." : "Answer revealed.")+'</div>' +
+      '<div class="q-actions"><button class="btn" onclick="nextQuestion()">Next →</button></div>';
+  }
 }
 
-function showWinner(){
-  const max=Math.max(...teams.map(t=>t.score));
-  const winners=teams.filter(t=>t.score===max);
-  document.getElementById("winnerName").textContent=
-    winners.length>1 ? "It's a Tie!" : winners[0].name+" Wins!";
-  const fs=document.getElementById("finalScores");
-  fs.innerHTML="";
-  [...teams].sort((a,b)=>b.score-a.score).forEach(t=>{
-    const d=document.createElement("div");
-    d.className="team"+(t.score===max?" lead":"");
-    d.style.setProperty("--c",t.color);
-    d.innerHTML=`<span class="crown">👑</span>
-      <div class="name">${escapeHtml(t.name)}</div>
-      <div class="pts">${t.score}</div>`;
+function renderWinner(){
+  const max = Math.max(...state.teams.map(t => t.score));
+  const winners = state.teams.filter(t => t.score === max);
+  document.getElementById("winnerName").textContent =
+    winners.length > 1 ? "It's a Tie!" : winners[0].name + " Wins!";
+  const fs = document.getElementById("finalScores");
+  fs.innerHTML = "";
+  [...state.teams].sort((a,b)=>b.score-a.score).forEach(t => {
+    const d = document.createElement("div");
+    d.className = "team" + (t.score === max ? " lead" : "");
+    d.style.setProperty("--c", t.color);
+    d.innerHTML = '<span class="crown">👑</span><div class="name">'+escapeHtml(t.name)+'</div><div class="pts">'+t.score+'</div>';
     fs.appendChild(d);
   });
-  show("end");
 }
 
-function resetBoard(){
-  clearInterval(timer);
-  document.getElementById("overlay").classList.remove("active");
-  show("setup");
-}
-
-/* ---------- Helpers ---------- */
-function show(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo(0,0);
-}
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-/* keyboard: Esc closes overlay */
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape" && document.getElementById("overlay").classList.contains("active")){
-    closeQuestion();
+/* ---------- Buzz-in countdown ---------- */
+function updateBuzzTimer(){
+  const a = state.active;
+  if(!a || a.phase !== "buzzed" || !a.timerEnd) return;
+  const rem = Math.max(0, a.timerEnd - Date.now());
+  const num = document.getElementById("buzzTimer");
+  const bar = document.getElementById("buzzBar");
+  if(num){
+    num.textContent = (rem/1000).toFixed(1) + "s";
+    num.classList.toggle("low", rem <= 2000);
   }
+  if(bar) bar.style.width = (100 * rem / (ANSWER_SECONDS*1000)) + "%";
+}
+setInterval(() => {
+  const a = state.active;
+  if(a && a.phase === "buzzed" && a.timerEnd){
+    updateBuzzTimer();
+    if(Date.now() >= a.timerEnd && a.controller === ROLE && !timingOut){
+      timingOut = true;     // time's up counts as a wrong answer
+      answerWrong();
+    }
+  }
+}, 100);
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && state.active){ closeActive(); commit(); }
 });
+
+/* ---------- Boot ---------- */
+loadSaved();
+render();
 </script>
 </body>
 </html>
